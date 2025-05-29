@@ -1,6 +1,6 @@
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic
-INFILES = 	main.cpp
+INFILES = 	main.cpp BitcoinExchange.cpp
 
 OBJFILES = $(INFILES:.cpp=.o)
 
