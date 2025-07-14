@@ -2,6 +2,12 @@
 #define BITCOINEXCHANGE_HPP
 
 #include <iostream>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+
+#define CSV_PATH "./data.csv"
 
 class BitcoinExchange
 {
