@@ -20,6 +20,7 @@ class BitcoinExchange
 		BitcoinExchange(const BitcoinExchange &copy);
 		BitcoinExchange& operator = (const BitcoinExchange &src);
 		void	setData(const char *path);
+		void	output(char *filename);
 
 };
 

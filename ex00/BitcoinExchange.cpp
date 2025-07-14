@@ -33,9 +33,9 @@ void	BitcoinExchange::setData(const char *path)
 	std::ifstream file(path);
 	if (file.is_open())
 	{
-		std::string line;
-		std::string date;
-		std::string value;
+		std::string	line;
+		std::string	date;
+		std::string	value;
 		std::getline(file, line);
 		while (std::getline(file, line))
 		{
@@ -48,4 +48,21 @@ void	BitcoinExchange::setData(const char *path)
 	}
 	else
 		std::cerr << "Can't open file." << std::endl;
+}
+
+void	BitcoinExchange::output(char *filename)
+{
+	std::ifstream infile(filename);
+	std::string	line;
+	std::string	date;
+	std::string	value;
+	double	rate;
+	if (infile.is_open())
+	{
+		getline(infile, line);
+		while (getline(infile, line))
+		{
+			std::stringstream s(line);
+		}
+	}
 }
