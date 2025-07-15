@@ -39,9 +39,9 @@ void	BitcoinExchange::setData(const char *path)
 		std::getline(file, line);
 		while (std::getline(file, line))
 		{
-			std::stringstream s(line);
-			std::getline(s, date, ',');
-			std::getline(s, value);
+			std::stringstream ss(line);
+			std::getline(ss, date, ',');
+			std::getline(ss, value);
 			_bitInf[date] = std::strtod(value.c_str(), NULL);
 		}
 		file.close();
@@ -59,10 +59,17 @@ void	BitcoinExchange::output(char *filename)
 	double	rate;
 	if (infile.is_open())
 	{
-		getline(infile, line);
+		std::getline(infile, line);
 		while (getline(infile, line))
 		{
-			std::stringstream s(line);
+			std::stringstream ss(line);
+			std::getline(ss, date, '|');
+			if (!is_date())
+			{
+				std::cerr << "date is wrong." << std::endl;
+				continue;
+			}
+			std::getline(ss, value);
 		}
 	}
 }
