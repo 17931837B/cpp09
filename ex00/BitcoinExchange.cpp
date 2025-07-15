@@ -64,7 +64,7 @@ void	BitcoinExchange::output(char *filename)
 		{
 			std::stringstream ss(line);
 			std::getline(ss, date, '|');
-			if (!is_date())
+			if (!isDate())
 			{
 				std::cerr << "date is wrong." << std::endl;
 				continue;
@@ -72,4 +72,30 @@ void	BitcoinExchange::output(char *filename)
 			std::getline(ss, value);
 		}
 	}
+}
+
+bool	isNum(const std::string &str)
+{
+	size_t	i = 0;
+	while (i < str.length())
+	{
+		if (str[i] < '0' || '9' < str[i])
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+bool	BitcoinExchange::isDate(std::string date)
+{
+	std::string	year;
+	std::string	month;
+	std::string	day;
+	std::stringstream	ss(date);
+	if (!std::getline(ss, year, '-') && !isNum(year))
+		return (false);
+	if (!std::getline(ss, month, '-') && !isNum(month))
+		return (false);
+	if (!std::getline(ss, day, '-') && !isNum(day))
+		return (false);
 }

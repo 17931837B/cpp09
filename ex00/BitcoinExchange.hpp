@@ -21,6 +21,8 @@ class BitcoinExchange
 		BitcoinExchange& operator = (const BitcoinExchange &src);
 		void	setData(const char *path);
 		void	output(char *filename);
+		bool	isNum(const std::string &str);
+		bool	isDate(std::string date);
 
 };
 
