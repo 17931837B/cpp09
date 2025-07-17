@@ -162,14 +162,53 @@ bool	BitcoinExchange::isDay(std::string year, std::string month, std::string day
 	return (true);
 }
 
-bool	BitcoinExchange::isVal(std::string val)
+bool	BitcoinExchange::isDouble(std::string val)
 {
 	int	dot_pos = 0;
 	size_t	i;
+
+	if (isDouble())
 	if (val[0] != ' ')
 		return (false);
-	if (num[1] == '-')
+	if (val[1] == '-')
 		i = 2;
 	else
 		i = 1;
+	while (i < val.length)
+	{
+		if (val[i] == '.')
+		{
+			if (dot_pos == 0)
+				dot_pos = i;
+			else
+				return (false);
+		}
+		else if (val[i] < '0' || '9' < val[i])
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+bool	isVal(std::string val)
+{
+	double	num_v;
+
+	if (!isDouble(val))
+	{
+		std::cerr << "val is wrong." << std::endl;
+		return (false);
+	}
+	num_v = std::strtod(val.c_str(), NULL);
+	if (num_v < 0)
+	{
+		std::cerr << "Error: not a positive number." << std::endl;
+		return (false);
+	}
+	else if (1000 < num_v)
+	{
+		std::cerr << "Error: too large a number." << std::endl;
+		return (false);
+	}
+	return (true);
 }
