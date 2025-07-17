@@ -98,4 +98,6 @@ bool	BitcoinExchange::isDate(std::string date)
 		return (false);
 	if (!std::getline(ss, day, '-') && !isNum(day))
 		return (false);
+	if (!isYear(year) || !isMonth(month) || !isDay(day))
+		return (false);
 }
