@@ -70,6 +70,7 @@ void	BitcoinExchange::output(char *filename)
 				std::cerr << "date is wrong." << std::endl;
 				continue;
 			}
+			
 			std::getline(ss, value);
 		}
 	}
@@ -103,6 +104,7 @@ bool	BitcoinExchange::isDate(std::string date)
 		return (false);
 	if (!isYear(year) || !isMonth(month) || !isDay(day))
 		return (false);
+	return (true);
 }
 
 bool	BitcoinExchange::isYear(std::string year)
