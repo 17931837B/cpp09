@@ -57,6 +57,7 @@ void	BitcoinExchange::output(char *filename)
 	std::string	date;
 	std::string	value;
 	double	rate;
+
 	if (infile.is_open())
 	{
 		std::getline(infile, line);
@@ -77,6 +78,7 @@ void	BitcoinExchange::output(char *filename)
 bool	isNum(const std::string &str)
 {
 	size_t	i = 0;
+
 	while (i < str.length())
 	{
 		if (str[i] < '0' || '9' < str[i])
@@ -92,6 +94,7 @@ bool	BitcoinExchange::isDate(std::string date)
 	std::string	month;
 	std::string	day;
 	std::stringstream	ss(date);
+
 	if (!std::getline(ss, year, '-') && !isNum(year))
 		return (false);
 	if (!std::getline(ss, month, '-') && !isNum(month))
@@ -100,4 +103,46 @@ bool	BitcoinExchange::isDate(std::string date)
 		return (false);
 	if (!isYear(year) || !isMonth(month) || !isDay(day))
 		return (false);
+}
+
+bool	BitcoinExchange::isYear(std::string year)
+{
+	int	num = std::atoi(year.c_str());
+	if (num < 2009)
+		return (false);
+	return (true);
+}
+
+bool	BitcoinExchange::isMonth(std::string month)
+{
+	int	num = std::atoi(month.c_str());
+	if (num < 1 || 12 < num)
+		return (false);
+	return (true);
+}
+
+bool	BitcoinExchange::isDay(std::string year, std::string month, std::string day)
+{
+	int	num_y = std::atoi(year.c_str());
+	int	num_m = std::atoi(month.c_str());
+	int	num_d = std::atoi(day.c_str());
+
+	if (num_m == 2)
+	{
+		if (num_d < 1 || 29 < num_d)
+			return (false);
+	}
+	else if (num_m == 4 || num_m == 6 || num_m == 9 || num_m == 11)
+	{
+		if (num_d < 1 || 30 < num_d)
+			return (false);
+	}
+	else
+	{
+		if (num_d < 1 || 29 < num_d)
+			return (false);
+	}
+	if (!(num_y % 4 == 0 && (num_y % 100 != 0 || num_y % 400 == 0)) && num_d == 29)
+		return (false);
+	return (true);
 }

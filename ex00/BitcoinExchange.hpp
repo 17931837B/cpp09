@@ -23,6 +23,9 @@ class BitcoinExchange
 		void	output(char *filename);
 		bool	isNum(const std::string &str);
 		bool	isDate(std::string date);
+		bool	isYear(std::string year);
+		bool	isMonth(std::string month);
+		bool	isDay(std::string year, std::string month, std::string day);
 
 };
 
