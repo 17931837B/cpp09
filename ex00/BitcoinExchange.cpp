@@ -70,8 +70,21 @@ void	BitcoinExchange::output(char *filename)
 				std::cerr << "date is wrong." << std::endl;
 				continue;
 			}
-			
 			std::getline(ss, value);
+			if (!ss)
+			{
+				std::cerr << "format is wrong." << std::endl;
+				continue ;
+			}
+			if (!isVal(value))
+				continue ;
+			rate = getRate(date);
+			if (rate == -1)
+			{
+				std::cerr << "value is wrong." << std::endl;
+				continue ;
+			}
+			std::cout << date << "=>" << value << " = " << rate * std::strtod(value.c_str(), NULL) << std::endl;
 		}
 	}
 }
@@ -147,4 +160,17 @@ bool	BitcoinExchange::isDay(std::string year, std::string month, std::string day
 	if (!(num_y % 4 == 0 && (num_y % 100 != 0 || num_y % 400 == 0)) && num_d == 29)
 		return (false);
 	return (true);
+}
+
+bool	BitcoinExchange::isVal(std::string val)
+{
+	int	dot_pos = 0;
+	size_t	i;
+	if (val[0] != ' ')
+		return (false);
+	if (num[1] == '-')
+		i = 2;
+	else
+		i = 1;
+	
 }

@@ -26,7 +26,7 @@ class BitcoinExchange
 		bool	isYear(std::string year);
 		bool	isMonth(std::string month);
 		bool	isDay(std::string year, std::string month, std::string day);
-
+		bool	isVal(std::string val);
 };
 
 #endif
