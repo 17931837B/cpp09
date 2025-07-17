@@ -172,5 +172,4 @@ bool	BitcoinExchange::isVal(std::string val)
 		i = 2;
 	else
 		i = 1;
-	
 }
