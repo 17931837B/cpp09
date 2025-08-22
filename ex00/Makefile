@@ -4,7 +4,7 @@ INFILES = 	main.cpp BitcoinExchange.cpp
 
 OBJFILES = $(INFILES:.cpp=.o)
 
-NAME = test
+NAME = btc
 
 all: $(NAME)
 

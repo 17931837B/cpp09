@@ -7,7 +7,7 @@ int	main(int argc, char **argv)
 		std::cerr << "arguments are different." << std::endl;
 		return (1);
 	}
-	BitcoinExchange test(CSV_PATH);
-	std::cout << argv[1] << std::endl;
+	BitcoinExchange btc(CSV_PATH);
+	btc.output(argv[1]);
 	return (0);
 }
