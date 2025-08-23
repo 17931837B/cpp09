@@ -20,9 +20,9 @@ int	main(int argc, char **argv)
 		std::cerr << "Error: number of arguments." << std::endl;
 		return (1);
 	}
-	RPN	rpn;
 	try
 	{
+		RPN	rpn;
 		rpn.Calculate(argv[1]);
 	}
 	catch(const std::exception& e)
