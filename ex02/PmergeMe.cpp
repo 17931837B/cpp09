@@ -129,5 +129,106 @@ void	PmergeMe::isDuplicate(std::vector<unsigned int> &vec)
 
 void	PmergeMe::sortVec(std::vector<unsigned int> &vec)
 {
-	
+	int	mid = vec.size() / 2;
+	std::vector<unsigned int>	big(mid);
+	std::vector<Data>			small(vec.size - mid);
+	int	i;
+	int	j;
+	int	src_size;
+	int	k;
+	int	t;
+
+	if (vec.size() == 1)
+		return ;
+	i = 0;
+	j = 0;
+	while (i < vec.size() - 1)
+	{
+		if (vec[i] < vec[i + 1])
+		{
+			big[j] = vec[i + 1];
+			small[j].id = big[j];
+			small[j].val = vec[i];
+		}
+		else
+		{
+			big[j] = vec[i];
+			small[j].id = big[j];
+			small[j].val = vec[i + 1];
+		}
+		i += 2;
+		j++;
+	}
+	if (vec.size() % 2 == 1)
+	{
+		small[mid].id = 0;
+		small[mid].val = vec.back();
+	}
+	sortVec(big);
+	src_size = vec.size();
+	vec.clear();
+	vec.insert(vec.end(), big.begin(), big.end());
+	i = 1;
+	while (small.size())
+}
+
+int	PmergeMe::power(int n, int m)
+{
+	int	res;
+	int	i;
+
+	res = 1;
+	i = 0;
+	while (i < m)
+	{
+		res *= n;
+		i++;
+	}
+	return (res);
+}
+
+void	PmergeMe::insert(std::vector<unsigned int>& vec, unsigned int a, int left, int right)
+{
+	int	mid;
+
+	if (left >= right)
+	{
+		vec.insert(vec.begin() + left, a);
+		return ;
+	}
+	mid = left + (right - left) / 2;
+	if (a < vec[mid])
+		insert(vec, a, left, mid);
+	else
+		insert(vec, a, mid + 1, right);
+}
+
+int	PmergeMe::getSmallIndex(unsigned int val, std::vector<Data>& small)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < small.size())
+	{
+		if (small[i].id == val)
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
+int	PmergeMe::findLeft(std::vector<unsigned int>& vec, unsigned int val)
+{
+	int	i;
+	std::vector<unsigned int>::iterator it = vec.begin();
+
+	i = 0;
+	while (it != vec.end())
+	{
+		if (vec[i] == val)
+			return (i);
+		i++;
+		it++;
+	}
+	return (0);
 }
