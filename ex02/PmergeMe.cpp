@@ -1,6 +1,6 @@
 #include "PmergeMe.hpp"
 
-Pmerge::PmergeMe()
+PmergeMe::PmergeMe()
 {
 
 }
@@ -62,9 +62,9 @@ void	PmergeMe::output()
 	time_sd = std::clock();
 	sortDeq(_deque);
 	time_ed = std::clock();
-	std::cout >> "After: ";
+	std::cout << "After: ";
 	i = 0;
-	while (i < _vector[i].size())
+	while (i < _vector.size())
 	{
 		std::cout << _vector[i] << " ";
 		i++;
@@ -86,6 +86,19 @@ void	PmergeMe::initVec(int argc, char **argv)
 		i++;
 	}
 	isDuplicate(_vector);
+}
+
+void	PmergeMe::initDeq(int argc, char **argv)
+{
+	int	i;
+
+	i = 1;
+	while (i < argc)
+	{
+		isNum(argv[i]);
+		_deque.push_back(std::atoi(argv[i]));
+		i++;
+	}
 }
 
 void	PmergeMe::isNum(char *str)
@@ -127,16 +140,17 @@ void	PmergeMe::isDuplicate(std::vector<unsigned int> &vec)
 	}
 }
 
-void	PmergeMe::sortVec(std::vector<unsigned int> &vec)
+void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 {
-	int	mid = vec.size() / 2;
-	std::vector<unsigned int>	big(mid);
-	std::vector<Data>			small(vec.size - mid);
-	int	i;
-	int	j;
-	int	src_size;
-	int	k;
-	int	t;
+	int mid = vec.size() / 2;
+	std::vector<unsigned int> big(mid);
+	std::vector<Data> small(vec.size() - mid);
+	size_t i;
+	size_t j;
+	int src_size;
+	int jacobsthal_index;
+	size_t current_limit;
+	size_t previous_limit;
 
 	if (vec.size() == 1)
 		return ;
@@ -168,8 +182,112 @@ void	PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	src_size = vec.size();
 	vec.clear();
 	vec.insert(vec.end(), big.begin(), big.end());
-	i = 1;
+	jacobsthal_index = 1;
+	previous_limit = 0;
 	while (small.size())
+	{
+		// Jacobsthal数列の計算
+		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
+		// bigのサイズを超えないように制限
+		if (current_limit > big.size())
+		{
+			current_limit = big.size();
+			// 奇数個の場合、ペアのない要素を最後に処理
+			if (src_size % 2 == 1)
+			{
+				int no_pair = getSmallIndexVec(0, small);
+				insertVec(vec, small[no_pair].val, 0, vec.size());
+				small.erase(small.begin() + no_pair);
+			}
+		}
+		// current_limit番目からprevious_limit+1番目まで逆順で挿入
+		i = current_limit;
+		while (i > previous_limit)
+		{
+			int small_i = getSmallIndexVec(big[i - 1], small);
+			int left = findLeftVec(vec, small[small_i].id);
+			insertVec(vec, small[small_i].val, 0, left);
+			small.erase(small.begin() + small_i);
+			i--;
+		}
+		previous_limit = current_limit;
+		jacobsthal_index++;
+	}
+}
+
+void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
+{
+	int mid = deq.size() / 2;
+	std::deque<unsigned int> big(mid);
+	std::deque<Data> small(deq.size() - mid);
+	size_t i;
+	size_t j;
+	int src_size;
+	int jacobsthal_index;
+	size_t current_limit;
+	size_t previous_limit;
+
+	if (deq.size() == 1)
+		return ;
+	i = 0;
+	j = 0;
+	while (i < deq.size() - 1)
+	{
+		if (deq[i] < deq[i + 1])
+		{
+			big[j] = deq[i + 1];
+			small[j].id = big[j];
+			small[j].val = deq[i];
+		}
+		else
+		{
+			big[j] = deq[i];
+			small[j].id = big[j];
+			small[j].val = deq[i + 1];
+		}
+		i += 2;
+		j++;
+	}
+	if (deq.size() % 2 == 1)
+	{
+		small[mid].id = 0;
+		small[mid].val = deq.back();
+	}
+	sortDeq(big);
+	src_size = deq.size();
+	deq.clear();
+	deq.insert(deq.end(), big.begin(), big.end());
+	jacobsthal_index = 1;
+	previous_limit = 0;
+	while (small.size())
+	{
+		// Jacobsthal数列の計算
+		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
+		// bigのサイズを超えないように制限
+		if (current_limit > big.size())
+		{
+			current_limit = big.size();
+			// 奇数個の場合、ペアのない要素を最後に処理
+			if (src_size % 2 == 1)
+			{
+				int no_pair = getSmallIndexDeq(0, small);
+				insertDeq(deq, small[no_pair].val, 0, deq.size());
+				small.erase(small.begin() + no_pair);
+			}
+		}
+		// current_limit番目からprevious_limit+1番目まで逆順で挿入
+		i = current_limit;
+		while (i > previous_limit)
+		{
+			int small_i = getSmallIndexDeq(big[i - 1], small);
+			int left = findLeftDeq(deq, small[small_i].id);
+			insertDeq(deq, small[small_i].val, 0, left);
+			small.erase(small.begin() + small_i);
+			i--;
+		}
+		previous_limit = current_limit;
+		jacobsthal_index++;
+	}
 }
 
 int	PmergeMe::power(int n, int m)
@@ -187,7 +305,7 @@ int	PmergeMe::power(int n, int m)
 	return (res);
 }
 
-void	PmergeMe::insert(std::vector<unsigned int>& vec, unsigned int a, int left, int right)
+void	PmergeMe::insertVec(std::vector<unsigned int>& vec, unsigned int a, int left, int right)
 {
 	int	mid;
 
@@ -198,12 +316,28 @@ void	PmergeMe::insert(std::vector<unsigned int>& vec, unsigned int a, int left, 
 	}
 	mid = left + (right - left) / 2;
 	if (a < vec[mid])
-		insert(vec, a, left, mid);
+		insertVec(vec, a, left, mid);
 	else
-		insert(vec, a, mid + 1, right);
+		insertVec(vec, a, mid + 1, right);
 }
 
-int	PmergeMe::getSmallIndex(unsigned int val, std::vector<Data>& small)
+void	PmergeMe::insertDeq(std::deque<unsigned int>& deq, unsigned int a, int left, int right)
+{
+	int	mid;
+
+	if (left >= right)
+	{
+		deq.insert(deq.begin() + left, a);
+		return ;
+	}
+	mid = left + (right - left) / 2;
+	if (a < deq[mid])
+		insertDeq(deq, a, left, mid);
+	else
+		insertDeq(deq, a, mid + 1, right);
+}
+
+int	PmergeMe::getSmallIndexVec(unsigned int val, std::vector<Data>& small)
 {
 	size_t	i;
 
@@ -217,7 +351,21 @@ int	PmergeMe::getSmallIndex(unsigned int val, std::vector<Data>& small)
 	return (0);
 }
 
-int	PmergeMe::findLeft(std::vector<unsigned int>& vec, unsigned int val)
+int	PmergeMe::getSmallIndexDeq(unsigned int val, std::deque<Data>& small)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < small.size())
+	{
+		if (small[i].id == val)
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
+int	PmergeMe::findLeftVec(std::vector<unsigned int>& vec, unsigned int val)
 {
 	int	i;
 	std::vector<unsigned int>::iterator it = vec.begin();
@@ -226,6 +374,22 @@ int	PmergeMe::findLeft(std::vector<unsigned int>& vec, unsigned int val)
 	while (it != vec.end())
 	{
 		if (vec[i] == val)
+			return (i);
+		i++;
+		it++;
+	}
+	return (0);
+}
+
+int	PmergeMe::findLeftDeq(std::deque<unsigned int>& deq, unsigned int val)
+{
+	int	i;
+	std::deque<unsigned int>::iterator it = deq.begin();
+
+	i = 0;
+	while (it != deq.end())
+	{
+		if (deq[i] == val)
 			return (i);
 		i++;
 		it++;
