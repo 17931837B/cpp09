@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <ctime>
 #include <climits>
+#include <sys/time.h>
 
 struct Data
 {

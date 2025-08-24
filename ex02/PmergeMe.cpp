@@ -43,10 +43,8 @@ std::deque<unsigned int> PmergeMe::getDeque() const
 void	PmergeMe::output()
 {
 	size_t	i;
-	std::clock_t	time_sv;
-	std::clock_t	time_ev;
-	std::clock_t	time_sd;
-	std::clock_t	time_ed;
+    struct timeval start_v, end_v;
+    struct timeval start_d, end_d;
 
 	std::cout << "Before: ";
 	i = 0;
@@ -56,12 +54,12 @@ void	PmergeMe::output()
 		i++;
 	}
 	std::cout << std::endl;
-	time_sv =std::clock();
+	gettimeofday(&start_v, NULL);
 	sortVec(_vector);
-	time_ev = std::clock();
-	time_sd = std::clock();
+	gettimeofday(&end_v, NULL);
+	gettimeofday(&start_d, NULL);
 	sortDeq(_deque);
-	time_ed = std::clock();
+	gettimeofday(&end_d, NULL);
 	std::cout << "After: ";
 	i = 0;
 	while (i < _vector.size())
@@ -70,8 +68,8 @@ void	PmergeMe::output()
 		i++;
 	}
 	std::cout << std::endl;
-	std::cout << "Time to process a range of " << _vector.size() << " elements with std::vector : " << 1000000.0 * (time_ev - time_sv) / CLOCKS_PER_SEC << " us" << std::endl;
-	std::cout << "Time to process a range of " << _deque.size() << " elements with std::deque : " << 1000000.0 * (time_ed - time_sd) / CLOCKS_PER_SEC << " us" << std::endl;
+	std::cout << "Time to process a range of " << _vector.size() << " elements with std::vector : " << (end_v.tv_sec - start_v.tv_sec) * 1000000.0 + (end_v.tv_usec - start_v.tv_usec) << " us" << std::endl;
+	std::cout << "Time to process a range of " << _deque.size() << " elements with std::deque : " << (end_d.tv_sec - start_d.tv_sec) * 1000000.0 + (end_d.tv_usec - start_d.tv_usec) << " us" << std::endl;
 }
 
 void	PmergeMe::initVec(int argc, char **argv)
@@ -95,7 +93,6 @@ void	PmergeMe::initDeq(int argc, char **argv)
 	i = 1;
 	while (i < argc)
 	{
-		isNum(argv[i]);
 		_deque.push_back(std::atoi(argv[i]));
 		i++;
 	}
@@ -142,15 +139,16 @@ void	PmergeMe::isDuplicate(std::vector<unsigned int> &vec)
 
 void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 {
-	int mid = vec.size() / 2;
-	std::vector<unsigned int> big(mid);
-	std::vector<Data> small(vec.size() - mid);
-	size_t i;
-	size_t j;
-	int src_size;
-	int jacobsthal_index;
-	size_t current_limit;
-	size_t previous_limit;
+	int							mid = vec.size() / 2;
+	std::vector<unsigned int>	big(mid);
+	std::vector<Data>			small(vec.size() - mid);
+	size_t						i;
+	size_t						j;
+	int							src_size;
+	int							jacobsthal_index;
+	size_t						current_limit;
+	size_t						previous_limit;
+	int							no_pair;
 
 	if (vec.size() == 1)
 		return ;
@@ -186,21 +184,17 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	previous_limit = 0;
 	while (small.size())
 	{
-		// Jacobsthal数列の計算
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
-		// bigのサイズを超えないように制限
 		if (current_limit > big.size())
 		{
 			current_limit = big.size();
-			// 奇数個の場合、ペアのない要素を最後に処理
 			if (src_size % 2 == 1)
 			{
-				int no_pair = getSmallIndexVec(0, small);
+				no_pair = getSmallIndexVec(0, small);
 				insertVec(vec, small[no_pair].val, 0, vec.size());
 				small.erase(small.begin() + no_pair);
 			}
 		}
-		// current_limit番目からprevious_limit+1番目まで逆順で挿入
 		i = current_limit;
 		while (i > previous_limit)
 		{
@@ -217,15 +211,15 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 
 void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 {
-	int mid = deq.size() / 2;
-	std::deque<unsigned int> big(mid);
-	std::deque<Data> small(deq.size() - mid);
-	size_t i;
-	size_t j;
-	int src_size;
-	int jacobsthal_index;
-	size_t current_limit;
-	size_t previous_limit;
+	int							mid = deq.size() / 2;
+	std::deque<unsigned int>	big(mid);
+	std::deque<Data>			small(deq.size() - mid);
+	size_t						i;
+	size_t						j;
+	int							src_size;
+	int							jacobsthal_index;
+	size_t						current_limit;
+	size_t						previous_limit;
 
 	if (deq.size() == 1)
 		return ;
@@ -261,13 +255,10 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	previous_limit = 0;
 	while (small.size())
 	{
-		// Jacobsthal数列の計算
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
-		// bigのサイズを超えないように制限
 		if (current_limit > big.size())
 		{
 			current_limit = big.size();
-			// 奇数個の場合、ペアのない要素を最後に処理
 			if (src_size % 2 == 1)
 			{
 				int no_pair = getSmallIndexDeq(0, small);
@@ -275,7 +266,6 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 				small.erase(small.begin() + no_pair);
 			}
 		}
-		// current_limit番目からprevious_limit+1番目まで逆順で挿入
 		i = current_limit;
 		while (i > previous_limit)
 		{
