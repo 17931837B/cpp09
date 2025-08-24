@@ -8,6 +8,7 @@
 #include <ctime>
 #include <climits>
 #include <sys/time.h>
+#include <cstring>
 
 struct Data
 {

@@ -5,6 +5,7 @@
 #include <stack>
 #include <list>
 #include <climits>
+#include <cstring>
 
 class RPN
 {
