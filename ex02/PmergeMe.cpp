@@ -144,13 +144,14 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	std::vector<Data>			small(vec.size() - mid);
 	size_t						i;
 	size_t						j;
-	int							src_size;
 	int							jacobsthal_index;
 	size_t						current_limit;
 	size_t						previous_limit;
-	int							no_pair;
+	int							straggler_index = -1;
+	int							small_i;
+	int							left;
 
-	if (vec.size() == 1)
+	if (vec.size() <= 1)
 		return ;
 	i = 0;
 	j = 0;
@@ -175,35 +176,34 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	{
 		small[mid].id = 0;
 		small[mid].val = vec.back();
+		straggler_index = mid;
 	}
 	sortVec(big);
-	src_size = vec.size();
 	vec.clear();
 	vec.insert(vec.end(), big.begin(), big.end());
+	if (straggler_index != -1)
+	{
+		insertVec(vec, small[straggler_index].val, 0, vec.size());
+		small.erase(small.begin() + straggler_index);
+	}
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
 	{
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
 		if (current_limit > big.size())
-		{
 			current_limit = big.size();
-			if (src_size % 2 == 1)
-			{
-				no_pair = getSmallIndexVec(0, small);
-				insertVec(vec, small[no_pair].val, 0, vec.size());
-				small.erase(small.begin() + no_pair);
-			}
-		}
 		i = current_limit;
 		while (i > previous_limit)
 		{
-			int small_i = getSmallIndexVec(big[i - 1], small);
-			int left = findLeftVec(vec, small[small_i].id);
+			small_i = getSmallIndexVec(big[i - 1], small);
+			left = findLeftVec(vec, small[small_i].id);
 			insertVec(vec, small[small_i].val, 0, left);
 			small.erase(small.begin() + small_i);
 			i--;
 		}
+		if (current_limit == big.size())
+			break;
 		previous_limit = current_limit;
 		jacobsthal_index++;
 	}
@@ -216,12 +216,14 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	std::deque<Data>			small(deq.size() - mid);
 	size_t						i;
 	size_t						j;
-	int							src_size;
 	int							jacobsthal_index;
 	size_t						current_limit;
 	size_t						previous_limit;
+	int							straggler_index = -1;
+	int							small_i;
+	int							left;
 
-	if (deq.size() == 1)
+	if (deq.size() <= 1)
 		return ;
 	i = 0;
 	j = 0;
@@ -246,35 +248,34 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	{
 		small[mid].id = 0;
 		small[mid].val = deq.back();
+		straggler_index = mid;
 	}
 	sortDeq(big);
-	src_size = deq.size();
 	deq.clear();
 	deq.insert(deq.end(), big.begin(), big.end());
+	if (straggler_index != -1)
+	{
+		insertDeq(deq, small[straggler_index].val, 0, deq.size());
+		small.erase(small.begin() + straggler_index);
+	}
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
 	{
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
 		if (current_limit > big.size())
-		{
 			current_limit = big.size();
-			if (src_size % 2 == 1)
-			{
-				int no_pair = getSmallIndexDeq(0, small);
-				insertDeq(deq, small[no_pair].val, 0, deq.size());
-				small.erase(small.begin() + no_pair);
-			}
-		}
 		i = current_limit;
 		while (i > previous_limit)
 		{
-			int small_i = getSmallIndexDeq(big[i - 1], small);
-			int left = findLeftDeq(deq, small[small_i].id);
+			small_i = getSmallIndexDeq(big[i - 1], small);
+			left = findLeftDeq(deq, small[small_i].id);
 			insertDeq(deq, small[small_i].val, 0, left);
 			small.erase(small.begin() + small_i);
 			i--;
 		}
+		if (current_limit == big.size())
+			break;
 		previous_limit = current_limit;
 		jacobsthal_index++;
 	}
