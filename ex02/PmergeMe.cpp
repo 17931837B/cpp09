@@ -147,7 +147,7 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	int							jacobsthal_index;
 	size_t						current_limit;
 	size_t						previous_limit;
-	int							straggler_index = -1;
+	bool						has_straggler = false;
 	int							small_i;
 	int							left;
 
@@ -174,18 +174,14 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	}
 	if (vec.size() % 2 == 1)
 	{
-		small[mid].id = 0;
+		small[mid].id = UINT_MAX;
 		small[mid].val = vec.back();
-		straggler_index = mid;
+		has_straggler = true;
 	}
 	sortVec(big);
 	vec.clear();
 	vec.insert(vec.end(), big.begin(), big.end());
-	if (straggler_index != -1)
-	{
-		insertVec(vec, small[straggler_index].val, 0, vec.size());
-		small.erase(small.begin() + straggler_index);
-	}
+	
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
@@ -197,10 +193,26 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 		while (i > previous_limit)
 		{
 			small_i = getSmallIndexVec(big[i - 1], small);
-			left = findLeftVec(vec, small[small_i].id);
-			insertVec(vec, small[small_i].val, 0, left);
-			small.erase(small.begin() + small_i);
+			if (small_i != -1)
+			{
+				left = findLeftVec(vec, small[small_i].id);
+				insertVec(vec, small[small_i].val, 0, left);
+				small.erase(small.begin() + small_i);
+			}
 			i--;
+		}
+		if (current_limit == big.size() && has_straggler)
+		{
+			for (size_t k = 0; k < small.size(); k++)
+			{
+				if (small[k].id == UINT_MAX)
+				{
+					insertVec(vec, small[k].val, 0, vec.size());
+					small.erase(small.begin() + k);
+					has_straggler = false;
+					break;
+				}
+			}
 		}
 		if (current_limit == big.size())
 			break;
@@ -219,7 +231,7 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	int							jacobsthal_index;
 	size_t						current_limit;
 	size_t						previous_limit;
-	int							straggler_index = -1;
+	bool						has_straggler = false;
 	int							small_i;
 	int							left;
 
@@ -246,18 +258,14 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	}
 	if (deq.size() % 2 == 1)
 	{
-		small[mid].id = 0;
+		small[mid].id = UINT_MAX; // 特別なマーカー：未ペアの要素
 		small[mid].val = deq.back();
-		straggler_index = mid;
+		has_straggler = true;
 	}
 	sortDeq(big);
 	deq.clear();
 	deq.insert(deq.end(), big.begin(), big.end());
-	if (straggler_index != -1)
-	{
-		insertDeq(deq, small[straggler_index].val, 0, deq.size());
-		small.erase(small.begin() + straggler_index);
-	}
+	
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
@@ -269,10 +277,27 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 		while (i > previous_limit)
 		{
 			small_i = getSmallIndexDeq(big[i - 1], small);
-			left = findLeftDeq(deq, small[small_i].id);
-			insertDeq(deq, small[small_i].val, 0, left);
-			small.erase(small.begin() + small_i);
+			if (small_i != -1)
+			{
+				left = findLeftDeq(deq, small[small_i].id);
+				insertDeq(deq, small[small_i].val, 0, left);
+				small.erase(small.begin() + small_i);
+			}
 			i--;
+		}
+		// 最後のグループの処理が終わったら、未ペアの要素を挿入
+		if (current_limit == big.size() && has_straggler)
+		{
+			for (size_t k = 0; k < small.size(); k++)
+			{
+				if (small[k].id == UINT_MAX)
+				{
+					insertDeq(deq, small[k].val, 0, deq.size());
+					small.erase(small.begin() + k);
+					has_straggler = false;
+					break;
+				}
+			}
 		}
 		if (current_limit == big.size())
 			break;
@@ -339,7 +364,7 @@ int	PmergeMe::getSmallIndexVec(unsigned int val, std::vector<Data>& small)
 			return (i);
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 int	PmergeMe::getSmallIndexDeq(unsigned int val, std::deque<Data>& small)
@@ -353,7 +378,7 @@ int	PmergeMe::getSmallIndexDeq(unsigned int val, std::deque<Data>& small)
 			return (i);
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 int	PmergeMe::findLeftVec(std::vector<unsigned int>& vec, unsigned int val)
