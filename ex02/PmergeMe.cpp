@@ -181,7 +181,6 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	sortVec(big);
 	vec.clear();
 	vec.insert(vec.end(), big.begin(), big.end());
-	
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
@@ -258,14 +257,13 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	}
 	if (deq.size() % 2 == 1)
 	{
-		small[mid].id = UINT_MAX; // 特別なマーカー：未ペアの要素
+		small[mid].id = UINT_MAX;
 		small[mid].val = deq.back();
 		has_straggler = true;
 	}
 	sortDeq(big);
 	deq.clear();
 	deq.insert(deq.end(), big.begin(), big.end());
-	
 	jacobsthal_index = 1;
 	previous_limit = 0;
 	while (small.size())
@@ -285,7 +283,6 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 			}
 			i--;
 		}
-		// 最後のグループの処理が終わったら、未ペアの要素を挿入
 		if (current_limit == big.size() && has_straggler)
 		{
 			for (size_t k = 0; k < small.size(); k++)
