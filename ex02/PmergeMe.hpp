@@ -45,7 +45,4 @@ class PmergeMe
 		int		findLeftDeq(std::deque<unsigned int>& deq, unsigned int val);
 };
 
-
-
-
 #endif
