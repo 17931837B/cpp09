@@ -1,5 +1,7 @@
 #include "PmergeMe.hpp"
 
+static int count_vec = 0;
+
 PmergeMe::PmergeMe()
 {
 
@@ -7,7 +9,7 @@ PmergeMe::PmergeMe()
 
 PmergeMe::~PmergeMe()
 {
-
+	std::cout << count_vec << std::endl;
 }
 
 PmergeMe::PmergeMe(int argc, char **argv)
@@ -181,8 +183,20 @@ void PmergeMe::sortVec(std::vector<unsigned int> &vec)
 	sortVec(big);
 	vec.clear();
 	vec.insert(vec.end(), big.begin(), big.end());
-	jacobsthal_index = 1;
-	previous_limit = 0;
+	if (!small.empty())
+	{
+		unsigned int a1_val = big[0];
+		int small1_i = getSmallIndexVec(a1_val, small);
+
+		if (small1_i != -1)
+		{
+			unsigned int b1_val = small[small1_i].val;
+			vec.insert(vec.begin(), b1_val);
+			small.erase(small.begin() + small1_i);
+		}
+	}
+	jacobsthal_index = 2;
+	previous_limit = 1;
 	while (small.size())
 	{
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;
@@ -322,6 +336,7 @@ void	PmergeMe::insertVec(std::vector<unsigned int>& vec, unsigned int a, int lef
 {
 	int	mid;
 
+	count_vec++;
 	if (left >= right)
 	{
 		vec.insert(vec.begin() + left, a);
