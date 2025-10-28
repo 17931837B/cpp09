@@ -9,7 +9,7 @@ PmergeMe::PmergeMe()
 
 PmergeMe::~PmergeMe()
 {
-	std::cout << count_vec << std::endl;
+	// std::cout << count_vec << std::endl;
 }
 
 PmergeMe::PmergeMe(int argc, char **argv)
