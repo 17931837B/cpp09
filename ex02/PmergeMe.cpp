@@ -278,8 +278,20 @@ void PmergeMe::sortDeq(std::deque<unsigned int> &deq)
 	sortDeq(big);
 	deq.clear();
 	deq.insert(deq.end(), big.begin(), big.end());
-	jacobsthal_index = 1;
-	previous_limit = 0;
+	if (!small.empty())
+	{
+		unsigned int a1_val = big[0];
+		int small1_i = getSmallIndexDeq(a1_val, small);
+
+		if (small1_i != -1)
+		{
+			unsigned int b1_val = small[small1_i].val;
+			deq.insert(deq.begin(), b1_val);
+	    	small.erase(small.begin() + small1_i);
+	    }
+	}
+	jacobsthal_index = 2;
+	previous_limit = 1;
 	while (small.size())
 	{
 		current_limit = (power(2, jacobsthal_index + 1) + power(-1, jacobsthal_index)) / 3;

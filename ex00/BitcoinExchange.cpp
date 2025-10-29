@@ -84,7 +84,7 @@ void	BitcoinExchange::output(char *filename)
 				std::cerr << "Error: bad input => " << line << std::endl;
 				continue ;
 			}
-			std::cout << date << "=>" << value << " = " << rate * std::strtod(value.c_str(), NULL) << std::endl;
+			std::cout << date << "=> " << value << " = " << rate * std::strtod(value.c_str(), NULL) << std::endl;
 		}
 	}
 }
